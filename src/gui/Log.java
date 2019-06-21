@@ -16,7 +16,7 @@ public class Log extends JFrame
         LogScrollPane = new javax.swing.JScrollPane();
         Log = new javax.swing.JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
