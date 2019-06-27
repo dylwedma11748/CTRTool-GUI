@@ -4,6 +4,7 @@ import ctr.CTRTool;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -14,8 +15,9 @@ public class GUI extends JFrame
         initComponents();
     }
     
-    private boolean executed = false;
-
+    Changelog changelog;
+    int count = 0;
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -25,7 +27,6 @@ public class GUI extends JFrame
         TargetFileLabel = new javax.swing.JLabel();
         BrowseTargetFile = new javax.swing.JButton();
         Execute = new javax.swing.JButton();
-        Extract = new javax.swing.JCheckBox();
         ExtractWithoutDecrypting = new javax.swing.JCheckBox();
         KeepRawData = new javax.swing.JCheckBox();
         SpecifyKeysetFile = new javax.swing.JCheckBox();
@@ -50,6 +51,13 @@ public class GUI extends JFrame
         SpecifyMetaFile = new javax.swing.JCheckBox();
         MetaFileField = new javax.swing.JFormattedTextField();
         BrowseMetaFile = new javax.swing.JButton();
+        VersionLabel = new javax.swing.JLabel();
+        MenuBar = new javax.swing.JMenuBar();
+        File = new javax.swing.JMenu();
+        ChangeCTRToolFilePath = new javax.swing.JMenuItem();
+        Tools = new javax.swing.JMenu();
+        ShowLog = new javax.swing.JCheckBoxMenuItem();
+        ShowChangelog = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CTRTool GUI");
@@ -80,20 +88,11 @@ public class GUI extends JFrame
         });
         getContentPane().add(Execute, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 330, 80, -1));
 
-        Extract.setText("Extract");
-        Extract.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExtractActionPerformed(evt);
-            }
-        });
-        getContentPane().add(Extract, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
-
         ExtractWithoutDecrypting.setText("Extract Data Without Decrypting");
-        ExtractWithoutDecrypting.setEnabled(false);
-        getContentPane().add(ExtractWithoutDecrypting, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
+        getContentPane().add(ExtractWithoutDecrypting, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
 
         KeepRawData.setText("Keep Raw Data (Don't Unpack)");
-        getContentPane().add(KeepRawData, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
+        getContentPane().add(KeepRawData, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
 
         SpecifyKeysetFile.setText("Specify Keyset File");
         SpecifyKeysetFile.addActionListener(new java.awt.event.ActionListener() {
@@ -101,7 +100,7 @@ public class GUI extends JFrame
                 SpecifyKeysetFileActionPerformed(evt);
             }
         });
-        getContentPane().add(SpecifyKeysetFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
+        getContentPane().add(SpecifyKeysetFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
 
         FileTypeLabel.setText("File Type: CIA");
         getContentPane().add(FileTypeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, -1));
@@ -227,7 +226,50 @@ public class GUI extends JFrame
         });
         getContentPane().add(BrowseMetaFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 130, -1, -1));
 
-        setSize(new java.awt.Dimension(970, 396));
+        VersionLabel.setText("v1.1");
+        VersionLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        VersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                VersionLabelMouseReleased(evt);
+            }
+        });
+        getContentPane().add(VersionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, -1, -1));
+
+        File.setText("File");
+
+        ChangeCTRToolFilePath.setText("Change CTRTool File Path");
+        ChangeCTRToolFilePath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ChangeCTRToolFilePathActionPerformed(evt);
+            }
+        });
+        File.add(ChangeCTRToolFilePath);
+
+        MenuBar.add(File);
+
+        Tools.setText("Window");
+
+        ShowLog.setText("Show Log");
+        ShowLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ShowLogActionPerformed(evt);
+            }
+        });
+        Tools.add(ShowLog);
+
+        ShowChangelog.setText("Show Changelog");
+        ShowChangelog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ShowChangelogActionPerformed(evt);
+            }
+        });
+        Tools.add(ShowChangelog);
+
+        MenuBar.add(Tools);
+
+        setJMenuBar(MenuBar);
+
+        setSize(new java.awt.Dimension(970, 437));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -247,19 +289,6 @@ public class GUI extends JFrame
             TargetFileField.setText("\"" + filePath + "\"");
         }
     }//GEN-LAST:event_BrowseTargetFileActionPerformed
-
-    private void ExtractActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExtractActionPerformed
-        if(Extract.isSelected())
-        {
-            ExtractWithoutDecrypting.setEnabled(true);
-        }
-        
-        else
-        {
-            ExtractWithoutDecrypting.setSelected(false);
-            ExtractWithoutDecrypting.setEnabled(false);
-        }
-    }//GEN-LAST:event_ExtractActionPerformed
 
     private void SpecifyKeysetFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SpecifyKeysetFileActionPerformed
         if(SpecifyKeysetFile.isSelected())
@@ -437,14 +466,23 @@ public class GUI extends JFrame
         
         if(returnValue == JFileChooser.APPROVE_OPTION)
         {
-            File file = fileChooser.getSelectedFile();
-            String path = file.getAbsolutePath();
-            KeysetFileField.setText("\"" + path + "\"");
+            File keysetFile = fileChooser.getSelectedFile();
+            
+            if(keysetFile.exists())
+            {
+                String path = keysetFile.getAbsolutePath();
+                KeysetFileField.setText("\"" + path + "\"");
+            }
+            
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Provided Keyset file doesn't exist!", "Invalid File", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_BrowseKeysetFileActionPerformed
 
     private void ExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExecuteActionPerformed
-        if(executed != true)
+        if(CTRToolPath.getText().equals(" "))
         {
             FileFilter exe = new FileNameExtensionFilter("Exe Files", "exe");
         
@@ -458,18 +496,109 @@ public class GUI extends JFrame
             if(returnValue == JFileChooser.APPROVE_OPTION)
             {
                 File ctrTool = fileChooser.getSelectedFile();
-                CTRToolPath.setText(ctrTool.getAbsolutePath());
-                CTRTool.execute(ctrTool);
-                executed = true;
+                
+                if(ctrTool.exists() && ctrTool.canExecute())
+                {
+                    CTRToolPath.setText(ctrTool.getAbsolutePath());
+                    
+                    if(ctrTool.exists() && ctrTool.canExecute())
+                    {
+                        CTRTool.execute(ctrTool);
+                    }
+                    
+                    else
+                    {
+                        JOptionPane.showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }
         }
         
         else
         {
             File ctrTool = new File(CTRToolPath.getText());
-            CTRTool.execute(ctrTool);
+            
+            if(ctrTool.exists() && ctrTool.canExecute())
+            {
+                CTRTool.execute(ctrTool);
+            }
+            
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_ExecuteActionPerformed
+
+    private void ShowLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowLogActionPerformed
+        if(ShowLog.isSelected())
+        {
+            main.Main.log.setVisible(true);
+        }
+        
+        else
+        {
+            main.Main.log.dispose();
+        }
+    }//GEN-LAST:event_ShowLogActionPerformed
+
+    private void ChangeCTRToolFilePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeCTRToolFilePathActionPerformed
+        FileFilter exe = new FileNameExtensionFilter("Exe Files", "exe");
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Open CTRTool Program");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(exe);
+        
+        int returnValue = fileChooser.showOpenDialog(null);
+        
+        if(returnValue == JFileChooser.APPROVE_OPTION)
+        {
+            File ctrTool = fileChooser.getSelectedFile();
+            
+            if(ctrTool.exists() && ctrTool.canExecute())
+            {
+                CTRToolPath.setText(ctrTool.getAbsolutePath());
+            }
+            
+            else
+            {
+                JOptionPane.showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_ChangeCTRToolFilePathActionPerformed
+
+    private void ShowChangelogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowChangelogActionPerformed
+        if(ShowChangelog.isSelected())
+        {
+            changelog = new Changelog();
+            changelog.setVisible(true);
+        }
+        
+        else
+        {
+            changelog.dispose();
+        }
+    }//GEN-LAST:event_ShowChangelogActionPerformed
+
+    private void VersionLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VersionLabelMouseReleased
+        switch(count)
+        {
+            case 0:
+                changelog = new Changelog();
+                changelog.setVisible(true);
+                ShowChangelog.setSelected(true);
+                count = 1;
+                break;
+            
+            case 1:
+                changelog.dispose();
+                ShowChangelog.setSelected(false);
+                count = 0;
+                break;
+        }
+    }//GEN-LAST:event_VersionLabelMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BrowseCertificateChainFile;
     private javax.swing.JButton BrowseContentsFile;
@@ -481,15 +610,19 @@ public class GUI extends JFrame
     public static javax.swing.JLabel CTRToolPath;
     private javax.swing.JLabel CTRToolPathLabel;
     public static javax.swing.JFormattedTextField CertificateChainFileField;
+    private javax.swing.JMenuItem ChangeCTRToolFilePath;
     public static javax.swing.JFormattedTextField ContentsFileField;
     private javax.swing.JButton Execute;
-    public static javax.swing.JCheckBox Extract;
     public static javax.swing.JCheckBox ExtractWithoutDecrypting;
+    private javax.swing.JMenu File;
     private javax.swing.JLabel FileTypeLabel;
     public static javax.swing.JCheckBox KeepRawData;
     public static javax.swing.JFormattedTextField KeysetFileField;
     private javax.swing.JLabel KeysetFileLabel;
+    private javax.swing.JMenuBar MenuBar;
     public static javax.swing.JFormattedTextField MetaFileField;
+    public static javax.swing.JCheckBoxMenuItem ShowChangelog;
+    public static javax.swing.JCheckBoxMenuItem ShowLog;
     public static javax.swing.JCheckBox SpecifyCertificateChainFile;
     public static javax.swing.JCheckBox SpecifyContentsFile;
     public static javax.swing.JCheckBox SpecifyKeysetFile;
@@ -500,6 +633,8 @@ public class GUI extends JFrame
     public static javax.swing.JFormattedTextField TargetFileField;
     private javax.swing.JLabel TargetFileLabel;
     public static javax.swing.JFormattedTextField TicketFileField;
+    private javax.swing.JMenu Tools;
     private javax.swing.JLabel TopLabel;
+    private javax.swing.JLabel VersionLabel;
     // End of variables declaration//GEN-END:variables
 }

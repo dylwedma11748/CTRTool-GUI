@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class CTRTool 
 {
@@ -14,17 +15,14 @@ public class CTRTool
     {
         String command = "";
         
-        if(gui.GUI.Extract.isSelected())
+        if(gui.GUI.ExtractWithoutDecrypting.isSelected())
         {
-            if(gui.GUI.ExtractWithoutDecrypting.isSelected())
-            {
-                command = command + "-x -p";
-            }
-            
-            else
-            {
-                command = command + "-x ";
-            }
+            command = command + "-x ";
+        }
+        
+        else
+        {
+            command = command + "-x ";
         }
         
         if(gui.GUI.KeepRawData.isSelected())
@@ -80,43 +78,51 @@ public class CTRTool
     
     public static void execute(File ctrtool)
     {
-        try 
+        if(ctrtool.exists() && ctrtool.canExecute())
         {
-            Log.Log.setText(null);
-            Process process = Runtime.getRuntime().exec(ctrtool.getAbsolutePath() + " " + determineCommandLine());
-            InputStreamReader normalStream = new InputStreamReader(process.getInputStream());
-            InputStreamReader errorStream = new InputStreamReader(process.getErrorStream());
-            BufferedReader normalReader = new BufferedReader(normalStream);
-            BufferedReader errorReader = new BufferedReader(errorStream);
-            String line;
-            
-            Log.Log.append("Output Log:");
-            Log.Log.append("\n");
-            
-            while((line = normalReader.readLine()) != null)
+            try 
             {
-                if(! "".equals(line))
+                Log.Log.setText(null);
+                Process process = Runtime.getRuntime().exec(ctrtool.getAbsolutePath() + " " + determineCommandLine());
+                InputStreamReader normalStream = new InputStreamReader(process.getInputStream());
+                InputStreamReader errorStream = new InputStreamReader(process.getErrorStream());
+                BufferedReader normalReader = new BufferedReader(normalStream);
+                BufferedReader errorReader = new BufferedReader(errorStream);
+                String line;
+            
+                Log.Log.append("Output Log:");
+                Log.Log.append("\n");
+            
+                while((line = normalReader.readLine()) != null)
                 {
-                    Log.Log.append("\n" + line);
+                    if(! "".equals(line))
+                    {
+                        Log.Log.append("\n" + line);
+                    }
+                }
+            
+                Log.Log.append("\n");
+                Log.Log.append("\nError Log:");
+                Log.Log.append("\n");
+            
+                while((line = errorReader.readLine()) != null)
+                {
+                    if(! "".equals(line))
+                    {
+                        Log.Log.append("\n" + line);
+                    }
                 }
             }
-            
-            Log.Log.append("\n");
-            Log.Log.append("\nError Log:");
-            Log.Log.append("\n");
-            
-            while((line = errorReader.readLine()) != null)
+        
+            catch (IOException ex) 
             {
-                if(! "".equals(line))
-                {
-                    Log.Log.append("\n" + line);
-                }
+                Logger.getLogger(CTRTool.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
-        catch (IOException ex) 
+        else
         {
-            Logger.getLogger(CTRTool.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

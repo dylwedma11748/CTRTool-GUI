@@ -9,15 +9,15 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public class Main 
 {
+    public static Log log;
+    
     public static void main(String[] args) throws InterruptedException
     {
         try 
         {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             GUI gui = new GUI();
-            Log log = new Log();
-            log.setVisible(true);
-            Thread.sleep(500);
+            log = new Log();
             gui.setVisible(true);
         } 
         
