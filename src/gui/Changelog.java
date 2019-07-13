@@ -2,10 +2,9 @@ package gui;
 
 import javax.swing.JFrame;
 
-public class Changelog extends JFrame 
-{
-    public Changelog() 
-    {
+public class Changelog extends JFrame {
+
+    public Changelog() {
         initComponents();
     }
 
@@ -34,7 +33,7 @@ public class Changelog extends JFrame
         Changelog.setEditable(false);
         Changelog.setColumns(20);
         Changelog.setRows(5);
-        Changelog.setText("v1.1\nAdded Version Number on Main GUI.\nAdded Changelog GUI.\nLog no longer shows up on it's own.\nAdded Menu Bar on Main GUI.\nAdded \"Show Log\", \"Show Changelog\", and \"Change CTRTool File Path\" buttons to the Menu Bar\nAdded the ability to set the CTRTool file path before executing as well as changing it.\nAdded simple checks for the Target, Keyset, and CTRTool Program files to see if they exist.\nRemoved \"Extract\" option from the Main GUI as it's the default action in CTRTool.\nMinor bug fixes.\n\n\nv1.0\nInitial Release");
+        Changelog.setText("v1.2\nAdded support for NSCD files.\nAdded support for NCCH files.\nAdded support for exheader files.\nAdded support for LZSS files.\nAdded support for firm files.\nAdded support for cwav files.\nAdded support for ExeFS files.\nAdded support for RomFS files.\nAdded an update checker.\nAdded the ability to download CTRTool from directly from this program.\nAdded a Tabbed Pane with the new options for the new file formats.\nThe file type for the target file is now shown on the Main GUI.\nFixed incorrect command line arguments from previous release.\nUpdated file checking system.\nCTRTool file chooser now goes to the last selected file if already set.\nMinor bug fixes.\n\nv1.1\nAdded Version Number on Main GUI.\nAdded Changelog GUI.\nLog no longer shows up on it's own.\nAdded Menu Bar on Main GUI.\nAdded \"Show Log\", \"Show Changelog\", and \"Change CTRTool File Path\" buttons to the Menu Bar.\nAdded the ability to set the CTRTool file path before executing as well as changing it.\nAdded simple checks for the Target, Keyset, and CTRTool Program files to see if they exist.\nRemoved \"Extract\" option from the Main GUI as it's the default action in CTRTool.\nMinor bug fixes.\n\nv1.0\nInitial Release");
         ChangelogScrollPane.setViewportView(Changelog);
 
         getContentPane().add(ChangelogScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 920, 300));

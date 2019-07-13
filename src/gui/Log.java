@@ -2,13 +2,12 @@ package gui;
 
 import javax.swing.JFrame;
 
-public class Log extends JFrame 
-{
-    public Log() 
-    {
+public class Log extends JFrame {
+
+    public Log() {
         initComponents();
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
