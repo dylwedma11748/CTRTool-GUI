@@ -674,54 +674,418 @@ Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.*/
 package gui;
 
+import ctr.CTRTool;
+import java.awt.Point;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import util.Downloader;
+import util.Updater;
 
-public class Log extends JFrame {
+public class AdvancedModeGUI extends JFrame {
 
-    public Log() {
+    @SuppressWarnings("OverridableMethodCallInConstructor")
+    public AdvancedModeGUI(Point location) {
         initComponents();
+
+        if (location != null) {
+            setLocation(location);
+        }
+
+        getValuesFromPreviousGUI();
     }
 
+    private void getValuesFromPreviousGUI() {
+        if (GUI.storedCTRToolPath != null) {
+            storedCTRToolPath = GUI.storedCTRToolPath;
+            CTRToolPath.setText(AdvancedModeGUI.storedCTRToolPath);
+        }
+
+        if (GUI.storedInputFilePath != null) {
+            storedInputFilePath = GUI.storedInputFilePath;
+            TargetFileField.setText(GUI.storedInputFilePath);
+        }
+
+        if (GUI.storedInputFileType != null) {
+            storedInputFileType = GUI.storedInputFileType;
+            InputFileTypeLabel.setText(storedInputFileType);
+        }
+    }
+
+    private Changelog changelog;
+    private int count = 0;
+    public static String storedCTRToolPath = null;
+    public static String storedInputFilePath = null;
+    public static String storedInputFileType = null;
+
+    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         TopLabel = new javax.swing.JLabel();
-        LogScrollPane = new javax.swing.JScrollPane();
+        VersionLabel = new javax.swing.JLabel();
+        CommandField = new javax.swing.JFormattedTextField();
+        ScrollPane = new javax.swing.JScrollPane();
         Log = new javax.swing.JTextArea();
+        Execute = new javax.swing.JButton();
+        CTRToolPathLabel = new javax.swing.JLabel();
+        CTRToolPath = new javax.swing.JLabel();
+        TargetFileField = new javax.swing.JFormattedTextField();
+        BrowseTargetFile = new javax.swing.JButton();
+        TargetFileLabel = new javax.swing.JLabel();
+        CommandLabel = new javax.swing.JLabel();
+        InputFileTypeLabel = new javax.swing.JLabel();
+        MenuBar = new javax.swing.JMenuBar();
+        File = new javax.swing.JMenu();
+        DownloadLatestCTRTool = new javax.swing.JMenuItem();
+        ChangeCTRToolFilePath = new javax.swing.JMenuItem();
+        Options = new javax.swing.JMenu();
+        NormalMode = new javax.swing.JMenuItem();
+        Tools = new javax.swing.JMenu();
+        ShowChangelog = new javax.swing.JCheckBoxMenuItem();
+        Help = new javax.swing.JMenu();
+        Update = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Log");
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CTRTool GUI - Advanced Mode");
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         TopLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        TopLabel.setText("Log");
+        TopLabel.setText("CTRTool GUI by Dylan Wedman - Advanced Mode");
         getContentPane().add(TopLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 930, 20));
+
+        VersionLabel.setText("v1.3");
+        VersionLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        VersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                VersionLabelMouseReleased(evt);
+            }
+        });
+        getContentPane().add(VersionLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, -1, -1));
+        getContentPane().add(CommandField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 850, -1));
 
         Log.setEditable(false);
         Log.setColumns(20);
         Log.setRows(5);
-        LogScrollPane.setViewportView(Log);
+        Log.setText("Advanced Mode allows you to enter the full command manually and allows you to use any functions in CTRTool that have\nnot been implemented in this GUI yet. This text area will be cleared and filled with the log of the program upon\nexecution. Be sure to only enter the options and not the path of the exectuable or the target file in the command\nfield. Also be sure to specify the target file before executing. And I hope this goes without saying, but this mode \nis for advanced users only.");
+        ScrollPane.setViewportView(Log);
 
-        getContentPane().add(LogScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 920, 300));
+        getContentPane().add(ScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 940, 220));
 
-        setSize(new java.awt.Dimension(970, 396));
+        Execute.setText("Execute");
+        Execute.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExecuteActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Execute, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 390, -1, -1));
+
+        CTRToolPathLabel.setText("CTRTool Path:");
+        getContentPane().add(CTRToolPathLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
+
+        CTRToolPath.setText(" ");
+        getContentPane().add(CTRToolPath, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 850, -1));
+        getContentPane().add(TargetFileField, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 850, -1));
+
+        BrowseTargetFile.setText("Browse");
+        BrowseTargetFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BrowseTargetFileActionPerformed(evt);
+            }
+        });
+        getContentPane().add(BrowseTargetFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 340, 70, -1));
+
+        TargetFileLabel.setText("Target File:");
+        getContentPane().add(TargetFileLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
+
+        CommandLabel.setText("Command:");
+        getContentPane().add(CommandLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 370, -1, -1));
+
+        InputFileTypeLabel.setText("Input File Type:");
+        getContentPane().add(InputFileTypeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 290, 320, -1));
+
+        File.setText("File");
+
+        DownloadLatestCTRTool.setText("Download CTRTool");
+        DownloadLatestCTRTool.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DownloadLatestCTRToolActionPerformed(evt);
+            }
+        });
+        File.add(DownloadLatestCTRTool);
+
+        ChangeCTRToolFilePath.setText("Set CTRTool File Path");
+        ChangeCTRToolFilePath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ChangeCTRToolFilePathActionPerformed(evt);
+            }
+        });
+        File.add(ChangeCTRToolFilePath);
+
+        MenuBar.add(File);
+
+        Options.setText("Options");
+
+        NormalMode.setText("Normal Mode");
+        NormalMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NormalModeActionPerformed(evt);
+            }
+        });
+        Options.add(NormalMode);
+
+        MenuBar.add(Options);
+
+        Tools.setText("Window");
+
+        ShowChangelog.setText("Show Changelog");
+        ShowChangelog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ShowChangelogActionPerformed(evt);
+            }
+        });
+        Tools.add(ShowChangelog);
+
+        MenuBar.add(Tools);
+
+        Help.setText("Help");
+
+        Update.setText("Check for Updates");
+        Update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateActionPerformed(evt);
+            }
+        });
+        Help.add(Update);
+
+        MenuBar.add(Help);
+
+        setJMenuBar(MenuBar);
+
+        setSize(new java.awt.Dimension(970, 501));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        GUI.ShowLog.setSelected(false);
-    }//GEN-LAST:event_formWindowClosing
+    private void VersionLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_VersionLabelMouseReleased
+        switch (count) {
+            case 0:
+                changelog = new Changelog();
+                changelog.setVisible(true);
+                ShowChangelog.setSelected(true);
+                count = 1;
+                break;
 
+            case 1:
+                changelog.dispose();
+                ShowChangelog.setSelected(false);
+                count = 0;
+                break;
+        }
+    }//GEN-LAST:event_VersionLabelMouseReleased
+
+    private void DownloadLatestCTRToolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DownloadLatestCTRToolActionPerformed
+        FileFilter zip = new FileNameExtensionFilter("ZIP Archive", "zip");
+
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save file as");
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(zip);
+
+        int returnValue = chooser.showSaveDialog(this);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            String downloadURL = "https://github.com/profi200/Project_CTR/releases/download/0.15/makerom_015_ctrtool.zip";
+            URL download = null;
+            try {
+                download = new URL(downloadURL);
+            } catch (MalformedURLException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String filePath = chooser.getSelectedFile().getAbsolutePath();
+
+            if (!filePath.endsWith(".zip")) {
+                filePath = filePath.concat(".zip");
+            }
+
+            Downloader.downloadFile(download, filePath);
+        }
+    }//GEN-LAST:event_DownloadLatestCTRToolActionPerformed
+
+    private void ChangeCTRToolFilePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ChangeCTRToolFilePathActionPerformed
+        FileFilter exe = new FileNameExtensionFilter("Exe Files", "exe");
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Open CTRTool Program");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(exe);
+
+        if (storedCTRToolPath != null) {
+            if (new File(storedCTRToolPath).exists()) {
+                fileChooser.setSelectedFile(new File(storedCTRToolPath));
+            }
+        }
+
+        int returnValue = fileChooser.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File ctrTool = fileChooser.getSelectedFile();
+
+            if (ctrTool.exists() && ctrTool.canExecute()) {
+                CTRToolPath.setText(ctrTool.getAbsolutePath());
+                storedCTRToolPath = ctrTool.getAbsolutePath();
+            } else {
+                showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_ChangeCTRToolFilePathActionPerformed
+
+    private void NormalModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NormalModeActionPerformed
+        GUI gui = new GUI(getLocation());
+        gui.setVisible(true);
+        setVisible(false);
+        dispose();
+    }//GEN-LAST:event_NormalModeActionPerformed
+
+    private void ShowChangelogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ShowChangelogActionPerformed
+        if (ShowChangelog.isSelected()) {
+            changelog = new Changelog();
+            changelog.setVisible(true);
+        } else {
+            changelog.dispose();
+        }
+    }//GEN-LAST:event_ShowChangelogActionPerformed
+
+    private void UpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateActionPerformed
+        Updater.checkForCTRToolGUIUpdates(1);
+    }//GEN-LAST:event_UpdateActionPerformed
+
+    private void ExecuteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExecuteActionPerformed
+        if (CTRToolPath.getText().equals(" ")) {
+            FileFilter exe = new FileNameExtensionFilter("Exe Files", "exe");
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Open CTRTool Program");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.addChoosableFileFilter(exe);
+
+            int returnValue = fileChooser.showOpenDialog(null);
+
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File ctrTool = fileChooser.getSelectedFile();
+
+                if (ctrTool.exists() && ctrTool.canExecute()) {
+                    CTRToolPath.setText(ctrTool.getAbsolutePath());
+
+                    if (ctrTool.exists() && ctrTool.canExecute()) {
+                        CTRTool.executeAdvancedMode(ctrTool);
+                    } else {
+                        showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", ERROR_MESSAGE);
+                    }
+                }
+            }
+        } else {
+            File ctrTool = new File(CTRToolPath.getText());
+
+            if (ctrTool.exists() && ctrTool.canExecute()) {
+                CTRTool.executeAdvancedMode(ctrTool);
+            } else {
+                showMessageDialog(this, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid File", ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_ExecuteActionPerformed
+
+    private void BrowseTargetFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BrowseTargetFileActionPerformed
+        FileFilter ncsd = new FileNameExtensionFilter("NCSD File (.cci, .csu)", "cci", "csu");
+        FileFilter ncch = new FileNameExtensionFilter("NCCH File (.cxi, .cfa, .app, .caa)", "cxi", "cfa", "app", "caa");
+        FileFilter exheader = new FileNameExtensionFilter("NCCH Extended Header (.exheader)", "exheader");
+        FileFilter cia = new FileNameExtensionFilter("CTR Importable Archive (.cia)", "cia");
+        FileFilter tmd = new FileNameExtensionFilter("Title Meta Data (.tmd)", "tmd");
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Choose File");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.addChoosableFileFilter(cia);
+        fileChooser.addChoosableFileFilter(ncsd);
+        fileChooser.addChoosableFileFilter(ncch);
+        fileChooser.addChoosableFileFilter(exheader);
+        fileChooser.addChoosableFileFilter(tmd);
+
+        int returnValue = fileChooser.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+            TargetFileField.setText("\"" + filePath + "\"");
+            storedInputFilePath = "\"" + filePath + "\"";
+
+            String fileName = selectedFile.getName();
+            String extension = fileName.substring(fileName.indexOf("."));
+
+            switch (extension) {
+                case ".cci":
+                case ".csu":
+                    InputFileTypeLabel.setText("Input File Type: " + ncsd.getDescription());
+                    break;
+
+                case ".cxi":
+                case ".cfa":
+                case ".app":
+                case ".caa":
+                    InputFileTypeLabel.setText("Input File Type: " + ncch.getDescription());
+                    break;
+
+                case ".exheader":
+                    InputFileTypeLabel.setText("Input File Type: " + exheader.getDescription());
+                    break;
+
+                case ".cia":
+                    InputFileTypeLabel.setText("Input File Type: " + cia.getDescription());
+                    break;
+
+                case ".tmd":
+                    InputFileTypeLabel.setText("Input File Type: " + tmd.getDescription());
+                    break;
+
+                default:
+                    break;
+            }
+
+            storedInputFileType = InputFileTypeLabel.getText();
+        }
+    }//GEN-LAST:event_BrowseTargetFileActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BrowseTargetFile;
+    public static javax.swing.JLabel CTRToolPath;
+    private javax.swing.JLabel CTRToolPathLabel;
+    private javax.swing.JMenuItem ChangeCTRToolFilePath;
+    public static javax.swing.JFormattedTextField CommandField;
+    private javax.swing.JLabel CommandLabel;
+    private javax.swing.JMenuItem DownloadLatestCTRTool;
+    private javax.swing.JButton Execute;
+    private javax.swing.JMenu File;
+    private javax.swing.JMenu Help;
+    public static javax.swing.JLabel InputFileTypeLabel;
     public static javax.swing.JTextArea Log;
-    private javax.swing.JScrollPane LogScrollPane;
+    private javax.swing.JMenuBar MenuBar;
+    private javax.swing.JMenuItem NormalMode;
+    private javax.swing.JMenu Options;
+    private javax.swing.JScrollPane ScrollPane;
+    public static javax.swing.JCheckBoxMenuItem ShowChangelog;
+    public static javax.swing.JFormattedTextField TargetFileField;
+    private javax.swing.JLabel TargetFileLabel;
+    private javax.swing.JMenu Tools;
     private javax.swing.JLabel TopLabel;
+    private javax.swing.JMenuItem Update;
+    public static javax.swing.JLabel VersionLabel;
     // End of variables declaration//GEN-END:variables
 }

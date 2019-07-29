@@ -27,6 +27,21 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="Options">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Options"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="AdvancedMode">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Advanced Mode"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AdvancedModeActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="Tools">
           <Properties>
             <Property name="text" type="java.lang.String" value="Window"/>
@@ -76,7 +91,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="CTRTool GUI"/>
+    <Property name="title" type="java.lang.String" value="CTRTool GUI - Normal Mode"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
@@ -105,7 +120,7 @@
     <Component class="javax.swing.JLabel" name="TopLabel">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="CTRTool GUI by Dylan Wedman"/>
+        <Property name="text" type="java.lang.String" value="CTRTool GUI by Dylan Wedman - Normal Mode"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -114,9 +129,6 @@
       </Constraints>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="TargetFileField">
-      <Events>
-        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TargetFileFieldKeyPressed"/>
-      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
       </AuxValues>
@@ -266,7 +278,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="VersionLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="v1.2"/>
+        <Property name="text" type="java.lang.String" value="v1.3"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
           <Color id="Hand Cursor"/>
         </Property>
@@ -274,6 +286,9 @@
       <Events>
         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="VersionLabelMouseReleased"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+      </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="10" y="420" width="-1" height="-1"/>
@@ -686,7 +701,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="SpecifyLogoFile">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Specify Logo file"/>
+                    <Property name="text" type="java.lang.String" value="Specify Logo File"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecifyLogoFileActionPerformed"/>
@@ -801,7 +816,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="SpecifyExeFSDirectory">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Specify ExeFS directory"/>
+                    <Property name="text" type="java.lang.String" value="Specify ExeFS Directory"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecifyExeFSDirectoryActionPerformed"/>
@@ -844,7 +859,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="SpecifyRomFSFile">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Specify RomFS file"/>
+                    <Property name="text" type="java.lang.String" value="Specify RomFS File"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecifyRomFSFileActionPerformed"/>
@@ -900,7 +915,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="SpecifyRomFSDirectory">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Specify RomFS directory"/>
+                    <Property name="text" type="java.lang.String" value="Specify RomFS Directory"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecifyRomFSDirectoryActionPerformed"/>
@@ -1001,7 +1016,7 @@
               <SubComponents>
                 <Component class="javax.swing.JCheckBox" name="SpecifyFirmDirectory">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Specify Firm directory"/>
+                    <Property name="text" type="java.lang.String" value="Specify Firm Directory"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="SpecifyFirmDirectoryActionPerformed"/>
@@ -1199,6 +1214,19 @@
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="10" y="270" width="320" height="-1"/>
+        </Constraint>
+      </Constraints>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="VerifyHashesAndSignatures">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Verify Hashes and Signatures"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
+      </AuxValues>
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+          <AbsoluteConstraints x="10" y="100" width="-1" height="-1"/>
         </Constraint>
       </Constraints>
     </Component>

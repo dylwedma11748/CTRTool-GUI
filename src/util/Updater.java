@@ -672,273 +672,100 @@ may consider it more useful to permit linking proprietary applications with
 the library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.*/
-package ctr;
+package util;
 
-import gui.AdvancedModeGUI;
-import gui.Log;
-import static gui.GUI.*;
+import static gui.GUI.VersionLabel;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.showMessageDialog;
+import static javax.swing.JOptionPane.showOptionDialog;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class CTRTool {
+public class Updater {
 
-    public static String determineCommandLine() {
-        String command = "";
+    public static boolean guiCheckedForUpdates = false;
 
-        if (ExtractWithoutDecrypting.isSelected()) {
-            command = command + "-p ";
-        } else {
-            command = command + "-x ";
-        }
+    public static void checkForCTRToolGUIUpdates(int mode) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Checking for updates");
+                    String git = "https://github.com/dylwedma11748/CTRTool-GUI/releases";
+                    URL github = new URL(git);
+                    URLConnection connection = github.openConnection();
+                    InputStreamReader reader = new InputStreamReader(connection.getInputStream());
 
-        if (KeepRawData.isSelected()) {
-            command = command + "-r ";
-        }
+                    try (BufferedReader bReader = new BufferedReader(reader)) {
+                        String line;
 
-        if (SpecifyKeysetFile.isSelected()) {
-            String keysetFile = KeysetFileField.getText();
-            command = command + "-k " + keysetFile + " ";
-        }
+                        while ((line = bReader.readLine()) != null) {
+                            if (line.contains("<a href=\"/dylwedma11748/CTRTool-GUI/releases")) {
+                                String latestVersion = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<"));
+                                String versionNumber = latestVersion.substring(latestVersion.indexOf("v") + 1);
+                                String currentVersion = VersionLabel.getText();
+                                float latestVersionFloat = Float.valueOf(versionNumber);
+                                float currentVersionFloat = Float.valueOf(currentVersion.substring(currentVersion.indexOf("v") + 1));
 
-        if (VerifyHashesAndSignatures.isSelected()) {
-            command = command + "-y";
-        }
+                                if (currentVersionFloat < latestVersionFloat) {
+                                    int downloadUpdate = showOptionDialog(null, "A new update has been released. Download Now?", "CTRTool GUI Update", YES_NO_OPTION, INFORMATION_MESSAGE, null, null, null);
 
-        command = command + "-t " + getInputFileType() + " " + TargetFileField.getText() + " ";
+                                    if (downloadUpdate == YES_OPTION) {
+                                        FileFilter jar = new FileNameExtensionFilter("Jar files", "jar");
 
-        if (SpecifyCertificateChainFile.isSelected()) {
-            String certificateChainFile = CertificateChainFileField.getText();
-            command = command + "--certs=" + certificateChainFile + "";
-        }
+                                        JFileChooser chooser = new JFileChooser();
+                                        chooser.setDialogTitle("Save file as");
+                                        chooser.setAcceptAllFileFilterUsed(false);
+                                        chooser.addChoosableFileFilter(jar);
 
-        if (SpecifyTicketFile.isSelected()) {
-            String ticketFile = TicketFileField.getText();
-            command = command + "--tik=" + ticketFile + " ";
-        }
+                                        int returnValue = chooser.showSaveDialog(null);
 
-        if (SpecifyTMDFile.isSelected()) {
-            String tmdFile = TMDFileField.getText();
-            command = command + "--tmd=" + tmdFile + " ";
-        }
+                                        if (returnValue == JFileChooser.APPROVE_OPTION) {
+                                            String filePath = chooser.getSelectedFile().getAbsolutePath();
 
-        if (SpecifyContentsFile.isSelected()) {
-            String contentsFile = ContentsFileField.getText();
-            command = command + "--contents=" + contentsFile + " ";
-        }
+                                            if (!filePath.endsWith(".jar")) {
+                                                filePath = filePath.concat(".jar");
+                                            }
 
-        if (SpecifyMetaFile.isSelected()) {
-            String metaFile = MetaFileField.getText();
-            command = command + "--meta=" + metaFile + " ";
-        }
+                                            String downloadURL = git + "/download/" + latestVersionFloat + "/CTRToolGUI.jar";
+                                            URL download = new URL(downloadURL);
+                                            Downloader.downloadFile(download, filePath);
+                                        }
+                                    }
+                                } else if (latestVersionFloat < currentVersionFloat || currentVersionFloat == latestVersionFloat) {
+                                    if (mode == 1) {
+                                        showMessageDialog(null, "You are using the latest version", "CTRTool GUI Update", INFORMATION_MESSAGE);
+                                    }
+                                }
 
-        if (SpecifyLZSSOutputFile.isSelected()) {
-            String lzssFile = LZSSOutputFileField.getText();
-            command = command + "--lzssout=" + lzssFile + " ";
-        }
-
-        if (SpecifyNCCHPartitionIndex.isSelected()) {
-            String index = NCCHPartitionIndexField.getText();
-            command = command + "--ncch=" + index + " ";
-        }
-
-        if (SpecifyExtendedHeaderFile.isSelected()) {
-            String exheaderFile = ExtendedHeaderFileField.getText();
-            command = command + "--exheader=" + exheaderFile;
-        }
-
-        if (SpecifyPlainRegionFile.isSelected()) {
-            String plainRegionFile = PlainRegionFileField.getText();
-            command = command + "--plainrgn=" + plainRegionFile + " ";
-        }
-
-        if (SpecifyExeFSDirectory.isSelected()) {
-            String exeFSDirectory = ExeFSDirectoryField.getText();
-            command = command + "--exefsdir=" + exeFSDirectory + " ";
-        }
-
-        if (SpecifyExeFSFile.isSelected()) {
-            String exeFSFile = ExeFSFileField.getText();
-            command = command + "--exefs=" + exeFSFile + " ";
-        }
-
-        if (SpecifyRomFSFile.isSelected()) {
-            String romFSFile = RomFSFileField.getText();
-            command = command + "--romfs=" + romFSFile + " ";
-        }
-
-        if (SpecifyRomFSDirectory.isSelected()) {
-            String romFSDirectory = RomFSDirectoryField.getText();
-            command = command + "--romfsdir=" + romFSDirectory + " ";
-        }
-
-        if (ListFilesInRomFS.isSelected()) {
-            command = command + "--listromfs" + " ";
-        }
-
-        if (SpecifyFirmDirectory.isSelected()) {
-            String firmDirectory = FirmDirectoryField.getText();
-            command = command + "--firmdir=" + firmDirectory + " ";
-        }
-
-        if (SpecifyWavOutputFile.isSelected()) {
-            String waveFile = WavOutputFileField.getText();
-            command = command + "--wav=" + waveFile + " ";
-        }
-
-        if (SpecifyWavLoopCount.isSelected()) {
-            String loopCount = WavLoopCountField.getText();
-            command = command + "--wavloops=" + loopCount + " ";
-        }
-
-        if (DecompressCodeSection.isSelected()) {
-            command = command + "--decompresscode" + " ";
-        }
-
-        if (command.endsWith(" ")) {
-            command = command.substring(0, command.lastIndexOf(" "));
-        }
-
-        return command;
-    }
-
-    private static String determineCommandLineForAdvancedMode() {
-        String command = AdvancedModeGUI.CommandField.getText() + " " + AdvancedModeGUI.TargetFileField.getText();
-        return command;
-    }
-
-    private static String getInputFileType() {
-        String returnString = null;
-        String inputTypeText = InputFileTypeLabel.getText();
-
-        for (FileFilter filter : inputFilters) {
-            String desc = filter.getDescription();
-
-            if (inputTypeText.contains(desc)) {
-                if (filter.getDescription().equals(inputFilters[2].getDescription())) {
-                    returnString = "exheader";
-                } else if (filter.getDescription().equals(inputFilters[3].getDescription())) {
-                    returnString = "cia";
-                } else if (filter.getDescription().equals(inputFilters[4].getDescription())) {
-                    returnString = "tmd";
-                } else {
-                    returnString = desc.substring(0, 4).toLowerCase();
-                }
-            }
-        }
-
-        return returnString;
-    }
-
-    private static boolean keysetFileValid(File keysetFile) {
-        boolean valid = false;
-
-        if (!SpecifyKeysetFile.isSelected()) {
-            valid = true;
-        }
-
-        if (SpecifyKeysetFile.isSelected() && keysetFile.exists()) {
-            valid = true;
-        }
-
-        return valid;
-    }
-
-    private static boolean ctrtoolFileValid(File ctrtool) {
-        boolean valid = false;
-
-        if (ctrtool.exists() && ctrtool.canExecute()) {
-            valid = true;
-        }
-
-        return valid;
-    }
-
-    public static void execute(File ctrtool, File keysetFile) {
-        if (ctrtoolFileValid(ctrtool) && keysetFileValid(keysetFile)) {
-            try {
-                Log.Log.setText(null);
-                Process process = Runtime.getRuntime().exec(ctrtool.getAbsolutePath() + " " + determineCommandLine());
-                InputStreamReader normalStream = new InputStreamReader(process.getInputStream());
-                InputStreamReader errorStream = new InputStreamReader(process.getErrorStream());
-                BufferedReader normalReader = new BufferedReader(normalStream);
-                BufferedReader errorReader = new BufferedReader(errorStream);
-                String line;
-
-                Log.Log.append("Output Log:");
-                Log.Log.append("\n");
-
-                while ((line = normalReader.readLine()) != null) {
-                    if (!"".equals(line)) {
-                        Log.Log.append("\n" + line);
+                                break;
+                            }
+                        }
+                    }
+                } catch (MalformedURLException ex) {
+                    if (mode == 1) {
+                        Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
+                        showMessageDialog(null, "Unable to proceed with update, please report this to Dylan Wedman.", "MalformedURLException", ERROR_MESSAGE);
+                    }
+                } catch (IOException ex) {
+                    if (mode == 1) {
+                        Logger.getLogger(Updater.class.getName()).log(Level.SEVERE, null, ex);
+                        showMessageDialog(null, "Unable to proceed with update, please report this to Dylan Wedman.", "IOException", ERROR_MESSAGE);
                     }
                 }
-
-                Log.Log.append("\n");
-                Log.Log.append("\nError Log:");
-                Log.Log.append("\n");
-
-                while ((line = errorReader.readLine()) != null) {
-                    if (!"".equals(line)) {
-                        Log.Log.append("\n" + line);
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(CTRTool.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            if (keysetFileValid(keysetFile) == false) {
-                JOptionPane.showMessageDialog(null, "Provided Keyset file doesn't exist or cannot be used!", "Invalid Keyset File", JOptionPane.ERROR_MESSAGE);
-            }
-
-            if (ctrtoolFileValid(ctrtool) == false) {
-                JOptionPane.showMessageDialog(null, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid CTRTool Program", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    public static void executeAdvancedMode(File ctrtool) {
-        if (ctrtoolFileValid(ctrtool)) {
-            System.out.print("Valid");
-            try {
-                AdvancedModeGUI.Log.setText(null);
-                Process process = Runtime.getRuntime().exec(ctrtool.getAbsolutePath() + " " + determineCommandLineForAdvancedMode());
-                InputStreamReader normalStream = new InputStreamReader(process.getInputStream());
-                InputStreamReader errorStream = new InputStreamReader(process.getErrorStream());
-                BufferedReader normalReader = new BufferedReader(normalStream);
-                BufferedReader errorReader = new BufferedReader(errorStream);
-                String line;
-
-                AdvancedModeGUI.Log.append("Output Log:");
-                AdvancedModeGUI.Log.append("\n");
-
-                while ((line = normalReader.readLine()) != null) {
-                    if (!"".equals(line)) {
-                        AdvancedModeGUI.Log.append("\n" + line);
-                    }
-                }
-
-                AdvancedModeGUI.Log.append("\n");
-                AdvancedModeGUI.Log.append("\nError Log:");
-                AdvancedModeGUI.Log.append("\n");
-
-                while ((line = errorReader.readLine()) != null) {
-                    if (!"".equals(line)) {
-                        AdvancedModeGUI.Log.append("\n" + line);
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(CTRTool.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            if (ctrtoolFileValid(ctrtool) == false) {
-                JOptionPane.showMessageDialog(null, "Provided CTRTool file doesn't exist or cannot be executed!", "Invalid CTRTool Program", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        }.start();
     }
 }
